@@ -1,0 +1,89 @@
+idf
+
+first 16 bytes:
+file starts with an int32 indicating idf version (e.g. 8 or 9)
+bytes5-8 are a time_t (4 bytes) indicating recording time. unix_time= readasint32(data); unix_epoch = datenum(1970,1,1,0,0,0); timestr = datestr(unix_time./86400 + unix_epoch);
+int32 indicating horizontal resolution
+int32 indicating verstical resolution (screen)
+
+
+
+
+
+Can't figure out the header for the computer name or for the data column indicator
+But can read column indicator by simply looking for "Timestamp", always start with that in the files i've seen
+
+
+
+
+every sample start with 53 00 00 00 00 or 53 03 00 00 00 in hex
+every message starts with 4D 00 00 00 00, then timestamp (32bit signed int), then int8 how many characters, then text, then 01 00 00 00
+
+version 9 has subject name and description at end of idf file
+
+
+between end of data format and start of data, there is always this:
+0000000000000000000000000000000000000000000000000100000004000000000000000000F03F
+0000000000000000000000000000000000000000000000000100000004000000000000000000F03F
+0000000000000000000000000000000000000000000000000100000004000000000000000000F03F
+0000000000000000000000000000000000000000000000000100000004000000000000000000F03F
+0000000000000000000000000000000000000000000000000100000004000000000000000000F03F
+0000000000000000000000000000000000000000000000000100000004000000000000000000F03F
+0000000000000000000000000000000000000000000000000100000004000000000000000000F03F
+
+
+Between start of Timestamp and end of computer name is always a fixed amount of space:
+0000000000000000010000000100000050000000140000000000000001000000000000000EEB7800B5
+00000000000000000100000001000000500000001400000000000000010000000000000074836800B5
+00000000000000000100000001000000500000001400000002000000010000000000000047964700B5
+00000000000000000100000001000000500000001400000002000000010000000000000087314200B5
+000000000000000001000000010000005000000014000000000000001400000000000000726A3F0379
+000000000000000001000000010000005000000014000000000000000100000000000000CCD207004B
+right before Timestamp is length of string as uint8
+
+computer name, length indicator, os version, length indicator, iview version
+
+right before computer name, there is this:
+D00700009E0200007C0100002C010000000F
+8D2000007F020000DA010000280100000008
+A00F0000 BC020000 DA010000 29010000 00 14
+if v8 (doesn't have computer name), same just before data format spec:
+200300009E020000790100002C010000004C
+These contain:
+int32 fs (1/fs*1000*1000, e.g. 800 for 1250 recordings)
+int32 head distance
+int32 stim dim x
+int32 stim dim y
+uint8 00
+length indicator of computer name
+
+
+
+
+c char
+uint32 wrapped (how many time timestamp has wrapped)
+uint32 timestamp
+int32 Setnum
+int32
+int32
+short 
+int8 pupil confidence
+double lPupX lPupY
+double LPupDX LPupDY
+double LCr0X LCr0Y LCr1X LCr1Y 
+double rPupX rPupY
+double RPupDX RPupDY
+double RCr0X RCr0Y RCr1X RCr1Y 
+LEyeball REyeball don't seem to take any space, indicators of what data we just had or so?
+double LGX LGY
+int32 L plane
+1 double unknown
+double RGX RGY
+int32 R plane
+1 double unkown
+6 double HX HY HZ Ha Hb Hc
+3 double l eye pos
+3 double l gaze vec
+3 double r eye pos
+3 double r gaze vec
+2 int8 in one file, 4 in the other. then S again

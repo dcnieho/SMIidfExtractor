@@ -1,0 +1,1 @@
+get true monocular recording, check whats in those files. Given we know sf and the S header and such, we should be able to search through each file and determine padding. is this variable length per file, but fixed in the file? then can read them all
